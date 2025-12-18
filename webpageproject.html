@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Browse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #141414;
+            color: #FFFFFF;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0) 100%);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            color: #E50914;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: -1px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #b3b3b3;
+        }
+
+        .nav-links a.active {
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .search-icon, .notifications-icon, .profile-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 80vh;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), #141414),
+                        url('https://4kwallpapers.com/images/walls/thumbs_3t/23262.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            margin-top: 0;
+        }
+
+        .hero-content {
+            max-width: 500px;
+            margin-top: 100px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-play {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        .btn-play:hover {
+            background-color: rgba(255,255,255,0.8);
+        }
+
+        .btn-info {
+            background-color: rgba(109,109,110,0.7);
+            color: #FFFFFF;
+        }
+
+        .btn-info:hover {
+            background-color: rgba(109,109,110,0.4);
+        }
+
+        /* Content Rows */
+        .content-section {
+            padding: 0 50px;
+            margin-bottom: 50px;
+        }
+
+        .row-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .content-row {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+        }
+
+        .content-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .content-card {
+            min-width: 280px;
+            height: 160px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Trending Section with Numbers */
+        .trending-card {
+            min-width: 200px;
+            height: 300px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .trending-card:hover {
+            transform: scale(1.05);
+        }
+
+        .trending-number {
+            position: absolute;
+            bottom: 0;
+            left: -20px;
+            font-size: 200px;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-shadow: -2px -2px 0 #FFFFFF, 2px -2px 0 #FFFFFF, -2px 2px 0 #FFFFFF, 2px 2px 0 #FFFFFF;
+            line-height: 0.8;
+            z-index: 1;
+        }
+
+        .trending-image {
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 160px;
+            height: 240px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .trending-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trending-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            background-color: #2a2a2a;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 50px;
+            color: #808080;
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .hero {
+                height: 60vh;
+                padding: 0 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .content-section {
+                padding: 0 20px;
+            }
+
+            .content-card {
+                min-width: 200px;
+                height: 115px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">NETFLIX</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">TV Shows</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">New & Popular</a></li>
+                <li><a href="#">My List</a></li>
+                <li><a href="#">Browse by Languages</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="search-icon">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+            <div class="notifications-icon">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+            </div>
+            <div class="profile-icon">
+                <svg viewBox="0 0 24 24" fill="#E50914">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Stranger Things</h1>
+            <p class="hero-description">
+                When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-play">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Play
+                </button>
+                <button class="btn btn-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    More Info
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Sections -->
+    <div class="content-section">
+        <h2 class="row-title">Trending Now</h2>
+        <div class="content-row">
+            <div class="trending-card">
+                <div class="trending-number">1</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbbk5oyr6lQ1UWV6Ro_AoQLXsaQF81Aunkq4f4AZycdiNMSCQj4YHZHwpoRAhmr1qc5VjVXYKysKQ14HY-1NO9nmoXK1X0gzTMWytU_gzaoQ&s=10" alt="Trending 1">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">2</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYb9FM0xf1DAjEID9SjfCPrZdneAESx8zTKUrdTGi2Gzinxrala_IbyHxXXJHYMXWy3KCjryD8yNjxeKpacXr2PFWFbYIxyBMT-7HEapo8Gw&s=10" alt="Trending 2">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">3</div>
+                <div class="trending-image">
+                    <img src="https://m.media-amazon.com/images/M/MV5BMmRlNjQxNWQtMjk1OS00N2QxLTk0YWQtMzRhYjY5YTFhNjMxXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Trending 3">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">4</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVOQZJ84-RbB5vwp1dGj4YsonR2IZGcWrVZ6zqFK0ht7iXYKsEDQeiSxf-yCRH68QDryOV2K9KTNOT1Z-Pq8YFfQXUO1gPPmvYf1sZ-qDb&s=10" alt="Trending 4">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">5</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNRAuwywhgMTHe23oKc3o6aobbBWrL-_1F89wMm2nc9cPGSrg8ST9JY3tcaM5w3sR873GQfMLp2XXSsntTNq69xQAsj7ZIlnZNGeUEmyz8&s=10" alt="Trending 5">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">6</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1Pf91gewACXSU2ZtxCHNYKMe1CxINVbgh2qX2lEVFclkCPt9vyRU0GhN9EGVkN4QCOOKZd0pn-1t5uVzTtZ9x_XtKY27NCAHaK_gfety4&s=10" alt="Trending 6">
+                </div>
+            </div>
+            <div class="trending-card">
+                <div class="trending-number">7</div>
+                <div class="trending-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtSFRzDtwf5EUAq-qZrYtb1fGCFhE_QicijeRsMHtypkj45YluipMevCOf57Mgcd-U55J2xt0yAN1Z8sTRzZhOFHR_vfO9V49_fUvG1JdL&s=10" alt="Trending 7">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="row-title">Continue Watching for User</h2>
+        <div class="content-row">
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81975483.jpg" alt="Movie 1">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81902061.jpg" alt="Movie 2">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/82131939.jpg" alt="Movie 3">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81436990.jpg" alt="Movie 4">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81727155.jpg" alt="Movie 5">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81122198.jpg" alt="Movie 6">
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="row-title">Popular on Netflix</h2>
+        <div class="content-row">
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/80031634.jpg" alt="Popular 1">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81767872.jpg" alt="Popular 2">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/81731618.jpg" alt="Popular 3">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/70303496.jpg" alt="Popular 4">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/82096026.jpg" alt="Popular 5">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/70136126.jpg" alt="Popular 6">
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="row-title">Netflix Originals</h2>
+        <div class="content-row">
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/80189685.jpg" alt="Original 1">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://imgcdn.kim/poster/341/80117552.jpg" alt="Original 2">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnZPNhzkpqlX289ux9MZ3yqLv0toj-3FCihPU5Cldbl4ovbLq2SBoJnG9bVNjpplIua42CgeVNdhlGjEC-hq64ehe1VKHtNFxeJ5ySxHDJ&s=10" alt="Original 3">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpePIyzragPO_wy3cAS7f6IFwceJkA_QJJiJpxuDzW9HicW_4f_tQYIRL3W0_cEAdMgvY6qIyNxTDWIHvcPDPjwm4vC7_GS65xrQIRJGpt&s=10" alt="Original 4">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU1_MdmgoKEiIZeyiFTbvtyD5TUN8LHzAFx3TKYHQvbujj62rI72y8SS6dMEmvk45weDyEgHGPxvLjPYmCIHRJuqEOR5cgQbFMsyLhv1cU&s=10" alt="Original 5">
+            </div>
+            <div class="content-card">
+                <img class="card-image" src="https://dnm.nflximg.net/api/v6/Qs00mKCpRvrkl3HZAN5KwEL1kpE/AAAABRBPs7_AKCuYWGOWhQT3JX_APO5JC3mSoaMFoXWD4su4Y0H38BVAlLWyC2j6O6KY-u6jnxKOMuVSdO6KS6pdkWY4uxbXes_pRKg.jpg?r=385" alt="Original 6">
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Questions? Contact us.</p>
+        <p style="margin-top: 20px;">Netflix Clone - Built with HTML & CSS</p>
+    </footer>
+</body>
+</html>
